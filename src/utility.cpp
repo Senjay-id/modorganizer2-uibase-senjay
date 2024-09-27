@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include <QStringEncoder>
 #include <QUuid>
 #include <QtDebug>
+#include <QDesktopServices>
 #include <memory>
 #include <sstream>
 #define WIN32_LEAN_AND_MEAN
@@ -448,22 +449,35 @@ namespace shell
     return Result::makeSuccess(process);
   }
 
-  Result ExploreDirectory(const QFileInfo& info)
-  {
-    const auto path    = QDir::toNativeSeparators(info.absoluteFilePath());
-    const auto ws_path = path.toStdWString();
+Result ExploreDirectory(const QFileInfo& info)
+{
+    const auto path = QDir::toNativeSeparators(info.absoluteFilePath());
+    const QUrl url = QUrl::fromLocalFile(path);
 
-    return ShellExecuteWrapper(L"explore", ws_path.c_str(), nullptr);
+    if (!QDesktopServices::openUrl(url)) {
+      const auto e = ::GetLastError();
+        log::error("Failed to open directory: {}", e);
+      return Result::makeFailure(e);
+    } else {
+      return Result::makeSuccess();
+    }
+}
+
+Result ExploreFileInDirectory(const QFileInfo& info)
+{
+  const auto path      = QDir::toNativeSeparators(info.absoluteFilePath());
+  const QUrl url =
+      QUrl::fromLocalFile(QDir::toNativeSeparators(QFileInfo(path).absolutePath()));
+
+  // Open the directory first
+  if (!QDesktopServices::openUrl(url)) {
+    const auto e = ::GetLastError();
+    log::error("Failed to open directory: {}", e);
+    return Result::makeFailure(e);  // Handle failure as needed
   }
 
-  Result ExploreFileInDirectory(const QFileInfo& info)
-  {
-    const auto path      = QDir::toNativeSeparators(info.absoluteFilePath());
-    const auto params    = "/select,\"" + path + "\"";
-    const auto ws_params = params.toStdWString();
-
-    return ShellExecuteWrapper(nullptr, L"explorer", ws_params.c_str());
-  }
+  return Result::makeSuccess();  // Assuming you can explore the directory
+}
 
   Result Explore(const QFileInfo& info)
   {

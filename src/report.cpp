@@ -211,7 +211,8 @@ void TaskDialog::rememberChoice()
   }
 
   const auto b = static_cast<QuestionBoxMemory::Button>(m_result);
-
+  if (b == QDialogButtonBox::Cancel)
+    return;
   if (m_rememberCheck) {
     // action only
     if (m_rememberCheck->isChecked()) {
