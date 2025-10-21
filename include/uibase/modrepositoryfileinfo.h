@@ -50,6 +50,7 @@ public:
   QString author;
   QString uploader;
   QString uploaderUrl;
+  QString domainName;
 };
 }  // namespace MOBase
 

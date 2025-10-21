@@ -51,6 +51,7 @@ MOBase::ModRepositoryFileInfo::createFromJson(const QString& data)
   newInfo.author       = result.at(15).toString();
   newInfo.uploader     = result.at(16).toString();
   newInfo.uploaderUrl  = result.at(17).toString();
+  newInfo.domainName   = result.at(18).toString();
 
   return newInfo;
 }
@@ -59,7 +60,7 @@ QString MOBase::ModRepositoryFileInfo::toString() const
 {
   return QString("[ "
                  "\"%1\",%2,\"%3\",\"%4\",\"%5\",\"%6\",%7,%8,%9,\"%10\",\"%11\",\"%"
-                 "12\",%13,\"%14\",%15 ]")
+                 "12\",%13,\"%14\",%15,\"%16\",\"%17\",\"%18\",\"%19\" ]")
       .arg(gameName)
       .arg(fileID)
       .arg(name)
@@ -77,5 +78,6 @@ QString MOBase::ModRepositoryFileInfo::toString() const
       .arg(QString(QtJson::serialize(userData)))
       .arg(author)
       .arg(uploader)
-      .arg(uploaderUrl);
+      .arg(uploaderUrl)
+      .arg(domainName);
 }

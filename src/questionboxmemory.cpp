@@ -52,6 +52,7 @@ QuestionBoxMemory::QuestionBoxMemory(QWidget* parent, const QString& title,
   QIcon icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxQuestion);
   ui->iconLabel->setPixmap(icon.pixmap(128));
   ui->messageLabel->setText(text);
+  ui->messageLabel->setOpenExternalLinks(true);
 
   if (filename == nullptr) {
     // delete the 2nd check box
